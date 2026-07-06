@@ -1,0 +1,35 @@
+# ============================================================================
+#  Render Blueprint — SpendSmart Frontend (Angular 21 SPA)
+#  ----------------------------------------------------------------------------
+#  Render Static Site is free, unlimited, with auto-HTTPS and a global CDN.
+#  No expiry. Auto-deploys on every push to the connected branch.
+# ============================================================================
+
+services:
+  - type: web
+    name: spendsmart-frontend
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist/spendsmart-web/browser
+    autoDeploy: true
+    pullRequestPreviewsEnabled: false
+
+    # ── SPA rewrite ─────────────────────────────────────────────────────────
+    # All paths fall back to index.html so client-side routing works on
+    # refresh (e.g. /dashboard, /expenses/123).
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    # ── Long-term caching for hashed assets, short for index.html ───────────
+    headers:
+      - path: /*.js
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*.css
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
